@@ -1,4 +1,5 @@
 import View from "./view.js"
+import Store from "./store.js"
 
 // const App = {
 //     $: {
@@ -136,8 +137,24 @@ import View from "./view.js"
 
 // window.addEventListener("load", App.init);
 
+const players = [
+    {
+        id: 1,
+        name: 'Player 1',
+        iconClass: 'fa-x',
+        colorClass: 'turquoise',
+    },
+    {
+        id: 2,
+        name: 'Player 2',
+        iconClass: 'fa-o',
+        colorClass: 'yellow',
+    },
+];
+
 function init() {
     const view = new View();
+    const store = new Store(players);
 
     view.bindGameResetEvent(event => {
         
@@ -147,9 +164,21 @@ function init() {
 
     })
 
-    view.bindPlayerMoveEvent(event => {
-        view.setTurnIndicator(2);
-        view.handlePlayerMove(event.target, 1);
+    view.bindPlayerMoveEvent(square => {
+        const existingMove = store.game.moves.find(move => move.squareId === +square.id);
+
+        if(existingMove) {
+            return;
+        }
+        
+        // umieszcza iconę gracza w kwadracie
+        view.handlePlayerMove(square, store.game.currentPlayer);
+
+        // zmiana gracza
+        store.playerMove(+square.id)
+
+        // i teraz mamy innego currentPlayer
+        view.setTurnIndicator(store.game.currentPlayer);
     })
 
     console.log(view.$.turn);
