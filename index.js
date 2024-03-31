@@ -156,8 +156,13 @@ function init() {
     const view = new View();
     const store = new Store(players);
 
+    // zamyka komunikat wygranej, resetuje stan,czyści planszę i ustawia gracza
     view.bindGameResetEvent(event => {
-        
+        view.closeAll();
+        store.reset();
+        view.clearMoves();
+        view.setTurnIndicator(store.game.currentPlayer);
+        view.updateScores(store.stats.playerWithStats[0].wins, store.stats.playerWithStats[1].wins, store.stats.ties);
     })
 
     view.bindNewRoundEvent(event => {
@@ -175,7 +180,13 @@ function init() {
         view.handlePlayerMove(square, store.game.currentPlayer);
 
         // zmiana gracza
-        store.playerMove(+square.id)
+        store.playerMove(+square.id);
+
+        if(store.game.status.isComplete) {
+            view.openModal(store.game.status.winner ? `${store.game.status.winner.name} wins!` : 'Tie!');
+
+            return;
+        }
 
         // i teraz mamy innego currentPlayer
         view.setTurnIndicator(store.game.currentPlayer);

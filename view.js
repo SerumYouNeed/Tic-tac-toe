@@ -13,6 +13,9 @@ export default class View {
         this.$.modalText = this.#qs('[data-id="modal-text"]');
         this.$.modalBtn = this.#qs('[data-id="modal-btn"]');
         this.$.turn = this.#qs('[data-id="turn"]');
+        this.$.p1Wins = this.#qs('[data-id="player1-stats"]');
+        this.$.p2Wins = this.#qs('[data-id="player2-stats"]');
+        this.$.ties = this.#qs('[data-id="ties"]');
         
         this.$$.squares = this.#qsAll('[data-id="square"]');
         
@@ -24,8 +27,10 @@ export default class View {
 
     // rejestracja wszystkich eventów
 
+    // reset po wyskakującym komunikacie o zwycięzcy i po naciśnięciu resetu w okienku popdown
     bindGameResetEvent(handler) {
         this.$.resetBtn.addEventListener('click', handler);
+        this.$.modalBtn.addEventListener('click', handler);
     }
 
     bindNewRoundEvent(handler) {
@@ -40,7 +45,44 @@ export default class View {
     }
 
     // metody DOM
+    updateScores(p1Wins, p2Wins, ties) {
+        this.$.p1Wins.innerText = `${p1Wins} wins`; 
+        this.$.p2Wins.innerText = `${p2Wins} wins`; 
+        this.$.ties.innerText = `${ties} wins`; 
+    }
+
     // # trzyma to jako prywatne. nie ma do nich dostępu z zewnątrz.
+    openModal(message) {
+        this.$.modal.classList.remove('hidden');
+        this.$.modalText.innerText = message;
+    }
+
+    // zamyka wyskakujący komunikat
+    #closeModal() {
+        this.$.modal.classList.add('hidden');
+    }
+
+    #closeMenu() {
+        this.$.menuPopover.classList.add('hidden');
+        this.$.menuBtn.classList.remove('border');
+
+        const icon = this.$.menuBtn.querySelector('i');
+
+        icon.classList.add('fa-chevron-down');
+        icon.classList.remove('fa-chevron-up');
+    }
+
+    closeAll() {
+        this.#closeModal();
+        this.#closeMenu();
+    }
+
+    clearMoves() {
+        this.$$.squares.forEach((square => {
+            square.replaceChildren();
+        }));
+    }
+
     #toggleMenu() {
         this.$.menuPopover.classList.toggle('hidden');
         this.$.menuBtn.classList.toggle('border');
