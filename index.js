@@ -164,9 +164,15 @@ function init() {
         view.setTurnIndicator(store.game.currentPlayer);
         view.updateScores(store.stats.playerWithStats[0].wins, store.stats.playerWithStats[1].wins, store.stats.ties);
     })
-
+    
     view.bindNewRoundEvent(event => {
+        // update stanu gry
+        store.newRound();
 
+        view.closeAll();
+        view.clearMoves();
+        view.setTurnIndicator(store.game.currentPlayer);
+        view.updateScores(store.stats.playerWithStats[0].wins, store.stats.playerWithStats[1].wins, store.stats.ties);
     })
 
     view.bindPlayerMoveEvent(square => {
