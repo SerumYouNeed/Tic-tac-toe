@@ -83,6 +83,16 @@ export default class View {
         }));
     }
 
+    initMoves(moves) {
+        this.$$.squares.forEach(square => {
+            const existingMove = moves.find(move => move.squareId === +square.id);
+
+            if(existingMove) {
+                this.handlePlayerMove(square, existingMove.player);
+            }
+        })
+    }
+
     #toggleMenu() {
         this.$.menuPopover.classList.toggle('hidden');
         this.$.menuBtn.classList.toggle('border');
